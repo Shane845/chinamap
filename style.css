@@ -1,0 +1,55 @@
+body {
+    margin: 0;
+    /* 改成深色的径向渐变，更有层次感 */
+    background: radial-gradient(circle at center, #2c3e50 0%, #000000 100%);
+    color: #fff;
+    font-family: "Microsoft YaHei";
+    overflow: hidden;
+}
+
+#container {
+    width: 100vw;
+    height: 65vh; /* 给下方的面板留出更多呼吸空间 */
+}
+
+/* 给下方的声纹面板加一个模糊毛玻璃效果 */
+#voice-panel {
+    height: 35vh;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px); /* 关键：毛玻璃感 */
+    border-top: 1px solid rgba(255, 204, 0, 0.3);
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* 增加一个动态声纹扫描线的动画（纯CSS） */
+#visualizer {
+    display: flex;
+    align-items: flex-end;
+    height: 50px;
+    gap: 3px;
+}
+
+.bar {
+    width: 4px;
+    background: #ffcc00;
+    animation: bounce 0.5s ease-in-out infinite alternate;
+}
+
+/* 让每一根线条跳动的时间错开，看起来才真实 */
+.bar:nth-child(1) { animation-delay: 0.1s; height: 10px; }
+.bar:nth-child(2) { animation-delay: 0.3s; height: 30px; }
+.bar:nth-child(3) { animation-delay: 0.2s; height: 20px; }
+.bar:nth-child(4) { animation-delay: 0.4s; height: 40px; }
+.bar:nth-child(5) { animation-delay: 0.1s; height: 25px; }
+
+@keyframes bounce {
+    from { height: 5px; }
+    to { height: 40px; }
+}
+
+@keyframes scan {
+    0% { transform: scaleX(0); opacity: 0; }
+    50% { transform: scaleX(1); opacity: 1; }
+    100% { transform: scaleX(0); opacity: 0; }
+}

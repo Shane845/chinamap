@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>中国声纹地理</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="style.css"> 
+    <style>
+        body { margin: 0; background: #1a1a1a; color: #fff; font-family: "Microsoft YaHei"; }
+        #container { width: 100vw; height: 70vh; }
+        /* 声纹面板样式 */
+        #voice-panel {
+            height: 30vh; background: rgba(255,255,255,0.1);
+            border-top: 2px solid #ffcc00; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .waveform { width: 300px; height: 60px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    
+    <div id="voice-panel">
+        <h2 id="province-name">点击地图探索声纹</h2>
+        <div id="voice-desc">请选择具有特色音乐的省份</div>
+       <div id="visualizer">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+</div>
+        <audio id="bg-music" controls style="margin-top:10px;"></audio>
+    </div>
+
+    <script>
+        var myChart = echarts.init(document.getElementById('container'));
+        
+        // 重点：在这里增加你需要的省份数据
+        const musicData = {
+            '河南省': {
+                music: 'audio/henan.mp3', 
+                desc: '豫剧声纹：高亢嘹亮，具有极强的穿透力。',
+                style: '豫剧《花木兰》'
+            },
+            '安徽省': {
+                music: 'audio/anhui.mp3',
+                desc: '黄梅戏声纹：委婉清新，韵味悠长。',
+                style: '黄梅戏《天仙配》'
+            },
+            '四川省': {
+                music: 'audio/sichuan.mp3',
+                desc: '川剧声纹：变脸频率与唱腔节奏紧密配合。',
+                style: '川剧高腔'
+            }
+            // 按照这个格式，让分页面同学把剩下的加进来
+        };
+
+        fetch('china.json').then(res => res.json()).then(data => {
+            echarts.registerMap('china', data);
+            myChart.setOption({
+               series: [{
+    type: 'map',
+    map: 'china',
+    zoom: 1.2,           // 1. 放大地图，解决拥挤的第一步
+    center: [104, 36],   // 2. 将地图中心稍微调整
+    layoutCenter: ['50%', '45%'], // 3. 调整在屏幕中的位置
+    layoutSize: '90%',   // 4. 让地图占据更大的比例
+    label: { 
+        show: true, 
+        color: '#aaa', 
+        fontSize: 10,
+        distance: 5      // 5. 调整文字距离中心点的距离
+    },
+   
+}]
+            });
+
+            myChart.on('click', function(params) {
+                const info = musicData[params.name];
+                const audio = document.getElementById('bg-music');
+                const nameTag = document.getElementById('province-name');
+                const descTag = document.getElementById('voice-desc');
+
+                if(info) {
+                    nameTag.innerText = params.name + ' - ' + info.style;
+                    descTag.innerText = info.desc;
+                    audio.src = info.music;
+                    audio.play();
+                } else {
+                    nameTag.innerText = params.name;
+                    descTag.innerText = "暂无声纹采集数据";
+                    audio.pause();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
